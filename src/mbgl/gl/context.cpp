@@ -337,7 +337,7 @@ void Context::performCleanup() {
         if (program == id) {
             program.setDirty();
         }
-        mbgl::util::erase_if(vaos, [&] (const auto& kv) {
+        mbgl::util::erase_if(vaos, [&] (const VertexArrayObjectMap::value_type& kv) {
             return std::get<0>(kv.first) == id;
         });
         MBGL_CHECK_ERROR(glDeleteProgram(id));
@@ -356,7 +356,7 @@ void Context::performCleanup() {
             } else if (elementBuffer == id) {
                 elementBuffer.setDirty();
             }
-            mbgl::util::erase_if(vaos, [&] (const auto& kv) {
+            mbgl::util::erase_if(vaos, [&] (const VertexArrayObjectMap::value_type& kv) {
                 return std::get<1>(kv.first) == id
                     || std::get<2>(kv.first) == id;
             });
