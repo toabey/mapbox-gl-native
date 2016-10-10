@@ -28,7 +28,7 @@ public:
             : location(shader.getUniformLocation(name)) {}
 
         void operator=(const Value& value) {
-            if (current != value.t) {
+            if (!current || *current != value.t) {
                 current = value.t;
                 bindUniform(location, value.t);
             }
