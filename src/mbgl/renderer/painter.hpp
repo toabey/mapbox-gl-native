@@ -85,10 +85,6 @@ public:
     void renderRaster(PaintParameters&, RasterBucket&, const style::RasterLayer&, const RenderTile&);
     void renderBackground(PaintParameters&, const style::BackgroundLayer&);
 
-    float saturationFactor(float saturation);
-    float contrastFactor(float contrast);
-    std::array<float, 3> spinWeights(float spin_value);
-
     bool needsAnimation() const;
 
 private:
