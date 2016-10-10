@@ -252,7 +252,7 @@ void Painter::renderPass(PaintParameters& parameters,
         } else if (layer.is<CustomLayer>()) {
             MBGL_DEBUG_GROUP(layer.baseImpl->id + " - custom");
             context.resetState();
-            context.setDepth(gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0) });
+            context.setDepth(depthForSublayer(0, gl::Depth::ReadOnly));
             context.setStencil(gl::Stencil::disabled());
             context.setColor(colorForRenderPass());
             layer.as<CustomLayer>()->impl->render(state);
@@ -277,10 +277,10 @@ mat4 Painter::matrixForTile(const UnwrappedTileID& tileID) {
     return matrix;
 }
 
-Range<float> Painter::depthRangeForSublayer(int n) const {
+gl::Depth Painter::depthForSublayer(uint8_t n, gl::Depth::Mask mask) const {
     float nearDepth = ((1 + currentLayer) * numSublayers + n) * depthEpsilon;
     float farDepth = nearDepth + depthRangeSize;
-    return { nearDepth, farDepth };
+    return gl::Depth { gl::Depth::LessEqual, mask, { nearDepth, farDepth } };
 }
 
 gl::Stencil Painter::stencilForClipping(const ClipID& id) const {

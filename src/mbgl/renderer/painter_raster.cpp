@@ -55,7 +55,7 @@ void Painter::renderRaster(PaintParameters& parameters,
     context.bindTexture(*bucket.texture, 1, gl::TextureFilter::Linear);
 
     context.draw({
-        gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0) },
+        depthForSublayer(0, gl::Depth::ReadOnly),
         gl::Stencil::disabled(),
         colorForRenderPass(),
         parameters.shaders.raster,

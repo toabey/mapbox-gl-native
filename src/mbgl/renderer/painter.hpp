@@ -97,7 +97,7 @@ private:
                     uint32_t i, int8_t increment);
 
     mat4 matrixForTile(const UnwrappedTileID&);
-    Range<float> depthRangeForSublayer(int n) const;
+    gl::Depth depthForSublayer(uint8_t n, gl::Depth::Mask) const;
     gl::Stencil stencilForClipping(const ClipID&) const;
     gl::Color colorForRenderPass() const;
 

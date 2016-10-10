@@ -23,7 +23,7 @@ void Painter::renderCircle(PaintParameters& parameters,
     const CirclePaintProperties& properties = layer.impl->paint;
 
     context.draw({
-        gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0) },
+        depthForSublayer(0, gl::Depth::ReadOnly),
         frame.mapMode == MapMode::Still
             ? stencilForClipping(tile.clip)
             : gl::Stencil::disabled(),

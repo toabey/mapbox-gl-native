@@ -29,7 +29,7 @@ void Painter::renderBackground(PaintParameters& parameters, const BackgroundLaye
 
         for (const auto& tileID : util::tileCover(state, state.getIntegerZoom())) {
             context.draw({
-                gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0) },
+                depthForSublayer(0, gl::Depth::ReadOnly),
                 gl::Stencil::disabled(),
                 colorForRenderPass(),
                 parameters.shaders.fillPattern,
@@ -49,7 +49,7 @@ void Painter::renderBackground(PaintParameters& parameters, const BackgroundLaye
     } else {
         for (const auto& tileID : util::tileCover(state, state.getIntegerZoom())) {
             context.draw({
-                gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0), },
+                depthForSublayer(0, gl::Depth::ReadOnly),
                 gl::Stencil::disabled(),
                 colorForRenderPass(),
                 parameters.shaders.fill,

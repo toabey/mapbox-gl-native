@@ -37,7 +37,7 @@ void Painter::renderFill(PaintParameters& parameters,
 
         auto draw = [&] (uint8_t sublayer, auto& shader, const auto& subject) {
             context.draw({
-                gl::Depth { gl::Depth::LessEqual, true, depthRangeForSublayer(sublayer) },
+                depthForSublayer(sublayer, gl::Depth::ReadWrite),
                 stencilForClipping(tile.clip),
                 colorForRenderPass(),
                 shader,
@@ -78,7 +78,7 @@ void Painter::renderFill(PaintParameters& parameters,
     } else {
         auto draw = [&] (uint8_t sublayer, auto& shader, Color outlineColor, const auto& subject) {
             context.draw({
-                gl::Depth { gl::Depth::LessEqual, true, depthRangeForSublayer(sublayer) },
+                depthForSublayer(sublayer, gl::Depth::ReadWrite),
                 stencilForClipping(tile.clip),
                 colorForRenderPass(),
                 shader,

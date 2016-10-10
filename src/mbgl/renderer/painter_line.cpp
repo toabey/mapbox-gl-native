@@ -25,7 +25,7 @@ void Painter::renderLine(PaintParameters& parameters,
 
     auto draw = [&] (auto& shader, auto&& uniformValues) {
         context.draw({
-            gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0) },
+            depthForSublayer(0, gl::Depth::ReadOnly),
             stencilForClipping(tile.clip),
             colorForRenderPass(),
             shader,

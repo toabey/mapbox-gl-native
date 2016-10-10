@@ -18,12 +18,17 @@ public:
         Always       = 0x0207
     };
 
+    enum Mask : bool {
+        ReadOnly = false,
+        ReadWrite = true
+    };
+
     Function func;
-    bool mask;
+    Mask mask;
     Range<float> range;
 
     static Depth disabled() {
-       return Depth { Always, false, { 0.0, 1.0 } };
+       return Depth { Always, ReadOnly, { 0.0, 1.0 } };
     }
 };
 

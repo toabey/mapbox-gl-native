@@ -47,7 +47,7 @@ void Painter::renderSymbol(PaintParameters& parameters,
 
         context.draw({
             values_.pitchAlignment == AlignmentType::Map
-                ? gl::Depth { gl::Depth::LessEqual, false, depthRangeForSublayer(0) }
+                ? depthForSublayer(0, gl::Depth::ReadOnly)
                 : gl::Depth::disabled(),
             drawAcrossEdges
                 ? gl::Stencil::disabled()
