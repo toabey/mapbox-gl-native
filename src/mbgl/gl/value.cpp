@@ -217,18 +217,6 @@ Program::Type Program::Get() {
     return program;
 }
 
-const constexpr PointSize::Type PointSize::Default;
-
-void PointSize::Set(const Type& value) {
-    MBGL_CHECK_ERROR(glPointSize(value));
-}
-
-PointSize::Type PointSize::Get() {
-    GLfloat pointSize;
-    MBGL_CHECK_ERROR(glGetFloatv(GL_POINT_SIZE, &pointSize));
-    return pointSize;
-}
-
 const constexpr LineWidth::Type LineWidth::Default;
 
 void LineWidth::Set(const Type& value) {
@@ -335,6 +323,18 @@ BindVertexArray::Type BindVertexArray::Get() {
 }
 
 #if not MBGL_USE_GLES2
+
+const constexpr PointSize::Type PointSize::Default;
+
+void PointSize::Set(const Type& value) {
+    MBGL_CHECK_ERROR(glPointSize(value));
+}
+
+PointSize::Type PointSize::Get() {
+    GLfloat pointSize;
+    MBGL_CHECK_ERROR(glGetFloatv(GL_POINT_SIZE, &pointSize));
+    return pointSize;
+}
 
 const constexpr PixelZoom::Type PixelZoom::Default;
 

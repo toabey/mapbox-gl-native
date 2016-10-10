@@ -118,9 +118,9 @@ private:
     State<value::ClearColor> clearColor;
     State<value::ClearStencil> clearStencil;
     State<value::Program> program;
-    State<value::PointSize> pointSize;
     State<value::LineWidth> lineWidth;
 #if not MBGL_USE_GLES2
+    State<value::PointSize> pointSize;
     State<value::PixelZoom> pixelZoom;
     State<value::RasterPos> rasterPos;
 #endif // MBGL_USE_GLES2

@@ -146,13 +146,6 @@ struct Program {
     static Type Get();
 };
 
-struct PointSize {
-    using Type = float;
-    static const constexpr Type Default = 1;
-    static void Set(const Type&);
-    static Type Get();
-};
-
 struct LineWidth {
     using Type = float;
     static const constexpr Type Default = 1;
@@ -217,6 +210,13 @@ struct BindVertexArray {
 };
 
 #if not MBGL_USE_GLES2
+
+struct PointSize {
+    using Type = float;
+    static const constexpr Type Default = 1;
+    static void Set(const Type&);
+    static Type Get();
+};
 
 struct PixelZoom {
     struct Type {

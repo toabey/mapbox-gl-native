@@ -138,12 +138,12 @@ void Context::applyStateFunction(Fn&& fn) {
     fn(clearColor);
     fn(clearStencil);
     fn(program);
-    fn(pointSize);
     fn(lineWidth);
     fn(activeTexture);
     fn(bindFramebuffer);
     fn(viewport);
 #if not MBGL_USE_GLES2
+    fn(pointSize);
     fn(pixelZoom);
     fn(rasterPos);
 #endif // MBGL_USE_GLES2
@@ -189,10 +189,16 @@ void Context::clear(optional<mbgl::Color> color,
     MBGL_CHECK_ERROR(glClear(mask));
 }
 
+#if not MBGL_USE_GLES2
 DrawMode Context::operator()(const Points& points) {
     pointSize = points.pointSize;
     return DrawMode::Points;
 }
+#else
+DrawMode Context::operator()(const Points&) {
+    return DrawMode::Points;
+}
+#endif // MBGL_USE_GLES2
 
 DrawMode Context::operator()(const Lines& lines) {
     lineWidth = lines.lineWidth;
