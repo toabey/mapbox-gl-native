@@ -332,6 +332,7 @@ public class MapView extends FrameLayout {
             int tenDp = (int) getResources().getDimension(R.dimen.ten_dp);
             uiSettings.setCompassMargins(tenDp, tenDp, tenDp, tenDp);
         }
+        uiSettings.setCompassFadeFacingNorth(options.getCompassFadeFacingNorth());
 
         // Logo
         uiSettings.setLogoEnabled(options.getLogoEnabled());
@@ -2715,6 +2716,10 @@ public class MapView extends FrameLayout {
 
     void setCompassMargins(int left, int top, int right, int bottom) {
         setWidgetMargins(compassView, left, top, right, bottom);
+    }
+
+    void setCompassFadeFacingNorth(boolean compassFadeFacingNorth) {
+        compassView.setCompassFadeFacingNorth(compassFadeFacingNorth);
     }
 
     //

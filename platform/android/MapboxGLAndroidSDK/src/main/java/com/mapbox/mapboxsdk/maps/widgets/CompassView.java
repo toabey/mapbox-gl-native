@@ -15,18 +15,20 @@ import com.mapbox.mapboxsdk.R;
 import com.mapbox.mapboxsdk.maps.MapboxMap;
 
 import java.lang.ref.WeakReference;
-import java.util.Timer;
-import java.util.TimerTask;
 
 /**
- * UI element overlaid on a map to show the map's bearing
- * when it isn't true north (0.0). Tapping the compass resets the bearing to true
- * north and hides the compass.
+ * UI element overlaid on a map to show the map's bearing when it isn't true north (0.0). Tapping
+ * the compass resets the bearing to true north and hides the compass.
+ * <p>
+ * You can change the behaviour of this View during initialisation with
+ * {@link com.mapbox.mapboxsdk.maps.MapboxMapOptions}, and xml attributes. While running you can
+ * use {@link com.mapbox.mapboxsdk.maps.UiSettings}.
+ * </p>
  */
-public final class CompassView extends ImageView {
+public final class CompassView extends ImageView implements Runnable {
 
-    private Timer northTimer;
-    private double direction = 0.0f;
+    private double direction = 0.0;
+    private boolean fadeCompassViewFacingNorth = true;
     private ViewPropertyAnimatorCompat fadeAnimator;
 
     public CompassView(Context context) {
@@ -45,8 +47,6 @@ public final class CompassView extends ImageView {
     }
 
     private void initialize(Context context) {
-
-        // View configuration
         setImageDrawable(ContextCompat.getDrawable(getContext(), R.drawable.compass));
         setContentDescription(getResources().getString(R.string.compassContentDescription));
         setEnabled(false);
@@ -57,105 +57,98 @@ public final class CompassView extends ImageView {
         setLayoutParams(lp);
     }
 
-    public void setMapboxMap(@NonNull MapboxMap mapboxMap){
-        setOnClickListener(new CompassClickListener(mapboxMap));
+    public void setMapboxMap(@NonNull MapboxMap mapboxMap) {
+        setOnClickListener(new CompassClickListener(mapboxMap, this));
+    }
+
+    private void resetAnimation() {
+        if (fadeAnimator != null) {
+            fadeAnimator.cancel();
+        }
+        fadeAnimator = null;
+    }
+
+    public boolean isHidden() {
+        return fadeCompassViewFacingNorth && isFacingNorth();
+    }
+
+    public boolean isFacingNorth() {
+        // increase range more than just 0.0
+        return direction >= 359.0 || direction <= 1.0;
     }
 
     @Override
     public void setEnabled(boolean enabled) {
         super.setEnabled(enabled);
-        if (enabled) {
-            if (direction != 0.0) {
-                if (northTimer != null) {
-                    northTimer.cancel();
-                    northTimer = null;
-                }
-                if (fadeAnimator != null) {
-                    fadeAnimator.cancel();
-                }
-                fadeAnimator = null;
-                setAlpha(1.0f);
-                setVisibility(View.VISIBLE);
-            }
+        if (enabled && !isHidden()) {
+            resetAnimation();
+            setAlpha(1.0f);
+            setVisibility(View.VISIBLE);
         } else {
-            if (northTimer != null) {
-                northTimer.cancel();
-                northTimer = null;
-            }
-            if (fadeAnimator != null) {
-                fadeAnimator.cancel();
-            }
-            fadeAnimator = null;
+            resetAnimation();
+            setAlpha(0.0f);
             setVisibility(View.INVISIBLE);
         }
     }
 
-    public void update(double direction) {
+    public void update(final double direction) {
         this.direction = direction;
-        setRotation((float) direction);
 
         if (!isEnabled()) {
             return;
         }
 
-        if (direction == 0.0) {
-            if (getVisibility() == View.INVISIBLE) {
+        if (isFacingNorth() && fadeCompassViewFacingNorth) {
+            if (getVisibility() == View.INVISIBLE || fadeAnimator != null) {
                 return;
             }
-
-            if (northTimer == null) {
-                if (fadeAnimator != null) {
-                    fadeAnimator.cancel();
-                }
-                fadeAnimator = null;
-
-                northTimer = new Timer("CompassView North timer");
-                northTimer.schedule(new TimerTask() {
-                    @Override
-                    public void run() {
-                        post(new Runnable() {
-                            @Override
-                            public void run() {
-                                setAlpha(1.0f);
-                                fadeAnimator = ViewCompat.animate(CompassView.this).alpha(0.0f).setDuration(1000).withLayer();
-                                fadeAnimator.setListener(new ViewPropertyAnimatorListenerAdapter() {
-                                    @Override
-                                    public void onAnimationEnd(View view) {
-                                        setVisibility(View.INVISIBLE);
-                                        northTimer = null;
-                                    }
-                                });
-                            }
-                        });
-                    }
-                }, 1000);
-            }
+            postDelayed(this, 500);
+            return;
         } else {
-            if (northTimer != null) {
-                northTimer.cancel();
-                northTimer = null;
-            }
-            if (fadeAnimator != null) {
-                fadeAnimator.cancel();
-            }
+            resetAnimation();
             setAlpha(1.0f);
             setVisibility(View.VISIBLE);
+        }
+
+        setRotation((float) direction);
+    }
+
+    public void setCompassFadeFacingNorth(boolean compassFadeFacingNorth) {
+        fadeCompassViewFacingNorth = compassFadeFacingNorth;
+    }
+
+    @Override
+    public void run() {
+        if (isFacingNorth() && fadeCompassViewFacingNorth) {
+            resetAnimation();
+            fadeAnimator = ViewCompat.animate(CompassView.this).alpha(0.0f).setDuration(500).withLayer();
+            fadeAnimator.setListener(new ViewPropertyAnimatorListenerAdapter() {
+                @Override
+                public void onAnimationEnd(View view) {
+                    setVisibility(View.INVISIBLE);
+                    resetAnimation();
+                }
+            });
         }
     }
 
     static class CompassClickListener implements View.OnClickListener {
 
         private WeakReference<MapboxMap> mapboxMap;
+        private WeakReference<CompassView> compassView;
 
-        public CompassClickListener(final MapboxMap mapboxMap) {
+        CompassClickListener(final MapboxMap mapboxMap, CompassView compassView) {
             this.mapboxMap = new WeakReference<>(mapboxMap);
+            this.compassView = new WeakReference<>(compassView);
         }
 
         @Override
         public void onClick(View view) {
             final MapboxMap mapboxMap = this.mapboxMap.get();
-            if (mapboxMap != null) {
+            final CompassView compassView = this.compassView.get();
+            if (mapboxMap != null && compassView != null) {
                 mapboxMap.resetNorth();
+                compassView.postDelayed(compassView, 650);
             }
         }
     }
