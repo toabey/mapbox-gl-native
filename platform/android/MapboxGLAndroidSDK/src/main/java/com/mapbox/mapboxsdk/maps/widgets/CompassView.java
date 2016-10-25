@@ -27,6 +27,10 @@ import java.lang.ref.WeakReference;
  */
 public final class CompassView extends ImageView implements Runnable {
 
+    private static final long TIME_WAIT_IDLE = 500;
+    private static final long TIME_FADE_ANIMATION = TIME_WAIT_IDLE;
+    private static final long TIME_MAP_NORTH_ANIMATION = 150;
+
     private double direction = 0.0;
     private boolean fadeCompassViewFacingNorth = true;
     private ViewPropertyAnimatorCompat fadeAnimator;
@@ -98,11 +102,11 @@ public final class CompassView extends ImageView implements Runnable {
             return;
         }
 
-        if (isFacingNorth() && fadeCompassViewFacingNorth) {
+        if (isHidden()) {
             if (getVisibility() == View.INVISIBLE || fadeAnimator != null) {
                 return;
             }
-            postDelayed(this, 500);
+            postDelayed(this, TIME_WAIT_IDLE);
             return;
         } else {
             resetAnimation();
@@ -113,7 +117,7 @@ public final class CompassView extends ImageView implements Runnable {
         setRotation((float) direction);
     }
 
-    public void setCompassFadeFacingNorth(boolean compassFadeFacingNorth) {
+    public void fadeCompassViewFacingNorth(boolean compassFadeFacingNorth) {
         fadeCompassViewFacingNorth = compassFadeFacingNorth;
     }
 
@@ -121,7 +125,7 @@ public final class CompassView extends ImageView implements Runnable {
     public void run() {
         if (isFacingNorth() && fadeCompassViewFacingNorth) {
             resetAnimation();
-            fadeAnimator = ViewCompat.animate(CompassView.this).alpha(0.0f).setDuration(500).withLayer();
+            fadeAnimator = ViewCompat.animate(CompassView.this).alpha(0.0f).setDuration(TIME_FADE_ANIMATION).withLayer();
             fadeAnimator.setListener(new ViewPropertyAnimatorListenerAdapter() {
                 @Override
                 public void onAnimationEnd(View view) {
@@ -148,7 +152,7 @@ public final class CompassView extends ImageView implements Runnable {
             final CompassView compassView = this.compassView.get();
             if (mapboxMap != null && compassView != null) {
                 mapboxMap.resetNorth();
-                compassView.postDelayed(compassView, 650);
+                compassView.postDelayed(compassView, TIME_WAIT_IDLE + TIME_MAP_NORTH_ANIMATION);
             }
         }
     }
