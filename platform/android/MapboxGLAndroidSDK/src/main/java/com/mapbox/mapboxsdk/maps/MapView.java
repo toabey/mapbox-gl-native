@@ -2721,7 +2721,7 @@ public class MapView extends FrameLayout {
     }
 
     void setCompassFadeFacingNorth(boolean compassFadeFacingNorth) {
-        compassView.setCompassFadeFacingNorth(compassFadeFacingNorth);
+        compassView.fadeCompassViewFacingNorth(compassFadeFacingNorth);
     }
 
     //

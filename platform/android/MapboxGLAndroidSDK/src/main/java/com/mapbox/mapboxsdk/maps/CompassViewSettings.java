@@ -5,7 +5,7 @@ package com.mapbox.mapboxsdk.maps;
  */
 class CompassViewSettings extends ViewSettings{
 
-    private boolean fadeFacingNorth;
+    private boolean fadeFacingNorth = true;
 
     public CompassViewSettings() {
         super();
