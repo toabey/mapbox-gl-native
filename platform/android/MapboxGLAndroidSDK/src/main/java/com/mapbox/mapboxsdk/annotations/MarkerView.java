@@ -41,6 +41,9 @@ public class MarkerView extends Marker {
 
     private boolean selected;
 
+    private float width;
+    private float height;
+
     /**
      * Publicly hidden default constructor
      */
@@ -62,6 +65,22 @@ public class MarkerView extends Marker {
         this.flat = baseMarkerViewOptions.isFlat();
         this.rotation = baseMarkerViewOptions.getRotation();
         this.selected = baseMarkerViewOptions.selected;
+    }
+
+    float getWidth() {
+        return width;
+    }
+
+    void setWidth(float width) {
+        this.width = width;
+    }
+
+    float getHeight() {
+        return height;
+    }
+
+    void setHeight(float height) {
+        this.height = height;
     }
 
     /**
