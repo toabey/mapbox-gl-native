@@ -99,6 +99,15 @@ public class UiSettings {
     }
 
     /**
+     * Returns whether the compass performs a fading animation out when facing north.
+     *
+     * @return True if the compass will fade, false if it remains visible
+     */
+    public boolean isCompassFadeWhenFacingNorth(){
+        return compassSettings.isFadeFacingNorth();
+    }
+
+    /**
      * Returns the gravity value of the CompassView
      *
      * @return The gravity
